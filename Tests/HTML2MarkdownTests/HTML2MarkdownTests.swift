@@ -3,6 +3,11 @@ import XCTest
 
 final class HTML2MarkdownTests: XCTestCase {
     
+    func testHeaders() {
+        let h = "<h1>Header 1</h1><h3>Header 3</h3><h6>Header 6</h6>"
+        XCTAssertEqual(try HTML2Markdown.markdown(html: h), "# Header 1\n\n### Header 3\n\n###### Header 6")
+    }
+    
     func testParagraphs() {
         let one = "<p>Paragraph</p>"
         let two = "<p>Two</p><p>Paragraphs</p>"

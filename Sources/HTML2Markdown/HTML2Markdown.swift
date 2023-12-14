@@ -80,8 +80,6 @@ enum HTML2Markdown {
             }
             if !isLast { markdown += "\n" }
         // MARK: - Table
-        case "table":
-            children()
         case "tr":
             children(separator: " | ") { columns in
                 if isFirst {
@@ -97,6 +95,7 @@ enum HTML2Markdown {
         default:
             // header
             if let h = node.nodeName().regex(pattern: #"(?<=h)\d+"#).first, let header = Int(h) {
+                if !isFirst { markdown += "\n\n" }
                 markdown += String(repeating: "#", count: header) + " "
             }
             children()
