@@ -1,7 +1,7 @@
 import Foundation
 import SwiftSoup
 
-enum HTML2Markdown {
+public enum HTML2Markdown {
     public static func markdown(html: String) throws -> String {
         let document = try SwiftSoup.parse(html)
         if let body = document.body() {
