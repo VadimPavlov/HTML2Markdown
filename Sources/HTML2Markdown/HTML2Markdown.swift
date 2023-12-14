@@ -5,7 +5,7 @@ enum HTML2Markdown {
     public static func markdown(html: String) throws -> String {
         let document = try SwiftSoup.parse(html)
         if let body = document.body() {
-            return convert(node: body)
+            return convert(node: body).replace(pattern: "[\n]{3,}", with: "\n\n")
         } else {
             return ""
         }
@@ -33,11 +33,12 @@ enum HTML2Markdown {
         case "#text":
             markdown += node.description.trimmingCharacters(in: .whitespacesAndNewlines)
         case "br":
-            if !isLast { markdown += "\n" }
+            markdown += "\n"
             children()
         case "p":
             if !isFirst { markdown += "\n\n" }
             children()
+            if !isLast { markdown += "\n\n" }
         case "b", "strong":
             markdown += "**"
             children()
@@ -116,5 +117,16 @@ extension String {
         } catch {
             return []
         }
+    }
+    
+    func replace(pattern: String, with template: String, options: NSRegularExpression.Options = [.dotMatchesLineSeparators]) -> String {
+        do {
+            let regex = try NSRegularExpression(pattern: pattern, options: options)
+            let range = NSRange(location: 0, length: utf16.count)
+            return regex.stringByReplacingMatches(in: self, range: range, withTemplate: template)
+        } catch {
+            return self
+        }
+        
     }
 }

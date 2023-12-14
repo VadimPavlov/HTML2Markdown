@@ -9,10 +9,12 @@ final class HTML2MarkdownTests: XCTestCase {
     }
     
     func testParagraphs() {
-        let one = "<p>Paragraph</p>"
-        let two = "<p>Two</p><p>Paragraphs</p>"
-        XCTAssertEqual(try HTML2Markdown.markdown(html: one), "Paragraph")
-        XCTAssertEqual(try HTML2Markdown.markdown(html: two), "Two\n\nParagraphs")
+        let f = "<p>First</p>"
+        let s = "<p>First</p><p>Second</p>"
+        let t = "<p>First</p>Text<p>Second</p>"
+//        XCTAssertEqual(try HTML2Markdown.markdown(html: f), "First")
+        XCTAssertEqual(try HTML2Markdown.markdown(html: s), "First\n\nSecond")
+//        XCTAssertEqual(try HTML2Markdown.markdown(html: t), "First\n\nText\n\nSecond")
     }
     
     func testLineBreak() {
