@@ -3,7 +3,7 @@ import XCTest
 
 final class HTML2MarkdownTests: XCTestCase {
     
-    let converter = HTML2Markdown(unorderedListSymbol: "•")
+    let converter = HTML2Markdown()
     
     func testHeaders() {
         let h = "<h1>Header 1</h1><h3>Header 3</h3><h6>Header 6</h6>"
@@ -51,9 +51,14 @@ final class HTML2MarkdownTests: XCTestCase {
         let ul1 = "<ul><li>one</li><li>two</li><li>three</li></ul>"
         let ul2 = "first<ul><li>one</li><li>two</li><li>three</li></ul>"
         let ul3 = "<ul><li>one</li><li>two</li><li>three</li></ul>last"
-        XCTAssertEqual(try converter.markdown(html: ul1), "• one\n• two\n• three")
-        XCTAssertEqual(try converter.markdown(html: ul2), "first\n\n• one\n• two\n• three")
-        XCTAssertEqual(try converter.markdown(html: ul3), "• one\n• two\n• three\n\nlast")
+        XCTAssertEqual(try converter.markdown(html: ul1), "- one\n- two\n- three")
+        XCTAssertEqual(try converter.markdown(html: ul2), "first\n\n- one\n- two\n- three")
+        XCTAssertEqual(try converter.markdown(html: ul3), "- one\n- two\n- three\n\nlast")
+        
+        
+        let ul4 = "<ul><li>one</li><li>two</li><li>three</li></ul>"
+        let bullet = HTML2Markdown(unorderedListSymbol: "•")
+        XCTAssertEqual(try bullet.markdown(html: ul4), "• one\n• two\n• three")
     }
     
     func testOrderedList() {
@@ -82,7 +87,7 @@ final class HTML2MarkdownTests: XCTestCase {
 <h1>Header 1</h1><h3>Header 3</h3><h6>Header 6</h6><p>Normal text</p><p><b>Bold Text</b></p><p><i>Italic</i></p><p><b><i>Bold Italic text</i></b></p><ul><li><p>Unordered</p></li><li><p>List</p></li></ul><ol><li><p>One</p></li><li><p>Two</p></li><li><p>Three</p></li></ol><p><br></p><table><tbody><tr><td>R1C1</td><td>R1C2</td></tr><tr><td>R2C2</td><td>R2C2</td></tr></tbody></table>
 """
         let markdown = """
-# Header 1\n\n### Header 3\n\n###### Header 6\n\nNormal text\n\n**Bold Text**\n\n*Italic*\n\n***Bold Italic text***\n\n• Unordered\n• List\n\n1. One\n2. Two\n3. Three\n\n|   |   |\n|---|---|\n| R1C1 | R1C2 |\n| R2C2 | R2C2 |
+# Header 1\n\n### Header 3\n\n###### Header 6\n\nNormal text\n\n**Bold Text**\n\n*Italic*\n\n***Bold Italic text***\n\n- Unordered\n- List\n\n1. One\n2. Two\n3. Three\n\n|   |   |\n|---|---|\n| R1C1 | R1C2 |\n| R2C2 | R2C2 |
 """
         XCTAssertEqual(try converter.markdown(html: html), markdown)
     }
