@@ -46,6 +46,11 @@ public class HTML2Markdown {
             if !isFirst { markdown += "\n\n" }
             children()
             if !isLast { markdown += "\n\n" }
+        case "blockquote":
+            if !isFirst { markdown += "\n\n" }
+            markdown += "> "
+            children()
+            if !isLast { markdown += "\n\n" }
         case "b", "strong":
             markdown += "**"
             children()

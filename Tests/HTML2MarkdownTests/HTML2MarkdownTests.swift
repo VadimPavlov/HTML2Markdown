@@ -47,6 +47,11 @@ final class HTML2MarkdownTests: XCTestCase {
         XCTAssertEqual(try converter.markdown(html: l), "link")
     }
     
+    func testBlockquoute() {
+        let bq = "<blockquote>text</blockquote><blockquote><blockquote>seccond</blockquote>"
+        XCTAssertEqual(try converter.markdown(html: bq), "> text\n\n> > seccond")
+    }
+    
     func testUnorderedList() {
         let ul1 = "<ul><li>one</li><li>two</li><li>three</li></ul>"
         let ul2 = "first<ul><li>one</li><li>two</li><li>three</li></ul>"
