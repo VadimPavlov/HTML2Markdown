@@ -1,8 +1,15 @@
 import Foundation
 import SwiftSoup
 
-public enum HTML2Markdown {
-    public static func markdown(html: String) throws -> String {
+public class HTML2Markdown {
+    
+    let unorderedListSymbol: String
+    
+    public init(unorderedListSymbol: String = "-") {
+        self.unorderedListSymbol = unorderedListSymbol
+    }
+        
+    public func markdown(html: String) throws -> String {
         let document = try SwiftSoup.parse(html)
         if let body = document.body() {
             return convert(node: body).replace(pattern: "[\n]{3,}", with: "\n\n")
@@ -16,7 +23,7 @@ public enum HTML2Markdown {
         case unordered
     }
     
-    static func convert(node: Node, list: List? = nil) -> String {
+    func convert(node: Node, list: List? = nil) -> String {
         var markdown = ""
         
         typealias Before = ([String]) -> Void
@@ -75,7 +82,7 @@ public enum HTML2Markdown {
                 markdown += "\(node.siblingIndex + 1). "
                 children()
             case .unordered:
-                markdown += "• "
+                markdown += "\(unorderedListSymbol) "
                 children()
             default: break
             }
