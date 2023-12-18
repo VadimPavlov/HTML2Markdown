@@ -69,7 +69,7 @@ final class HTML2MarkdownTests: XCTestCase {
         let img = "<img src=\"https://www.swift.org/assets/images/swift~dark.svg\" width=\"100\" height=\"100\">"
         
         let converter = HTML2Markdown(ignoreTags: ["u", "img"])
-        //XCTAssertEqual(try converter.markdown(html: u), "<u>Underlined **Bold** text</u>")
+        XCTAssertEqual(try converter.markdown(html: u), "<u>Underlined **Bold** text</u>")
         XCTAssertEqual(try converter.markdown(html: img), img)
     }
     
