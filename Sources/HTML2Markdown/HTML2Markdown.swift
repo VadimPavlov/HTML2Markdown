@@ -4,11 +4,11 @@ import SwiftSoup
 public class HTML2Markdown {
     
     let unorderedListSymbol: String
-    let ignoreTags: [String]
-    
-    public init(ignoreTags: [String] = [], unorderedListSymbol: String = "-") {
+    let ignore: Ignore?
+    public typealias Ignore = (String) -> Bool
+    public init(unorderedListSymbol: String = "-", ignore: Ignore? = nil) {
         self.unorderedListSymbol = unorderedListSymbol
-        self.ignoreTags = ignoreTags
+        self.ignore = ignore
     }
         
     public func markdown(html: String) throws -> String {
@@ -39,7 +39,7 @@ public class HTML2Markdown {
         let isLast = node.siblingIndex + 1 == node.parent()?.childNodeSize()
 
         let nodeName = node.nodeName()
-        if ignoreTags.contains(nodeName) {
+        if ignore?(nodeName) == true {
             let attributes = node.getAttributes().flatMap { try? $0.html() } ?? ""
             if attributes.isEmpty {
                 markdown += "<\(nodeName)>"
@@ -136,7 +136,7 @@ public class HTML2Markdown {
             if !isLast { markdown += "\n" }
         default:
             // header
-            if let h = node.nodeName().regex(pattern: #"(?<=h)\d+"#).first, let header = Int(h) {
+            if let h = nodeName.regex(pattern: #"(?<=h)\d+"#).first, let header = Int(h) {
                 if !isFirst { markdown += "\n\n" }
                 markdown += String(repeating: "#", count: header) + " "
             }
