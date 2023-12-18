@@ -4,9 +4,11 @@ import SwiftSoup
 public class HTML2Markdown {
     
     let unorderedListSymbol: String
+    let ignoreTags: [String]
     
-    public init(unorderedListSymbol: String = "-") {
+    public init(ignoreTags: [String] = [], unorderedListSymbol: String = "-") {
         self.unorderedListSymbol = unorderedListSymbol
+        self.ignoreTags = ignoreTags
     }
         
     public func markdown(html: String) throws -> String {
@@ -36,9 +38,24 @@ public class HTML2Markdown {
         let isFirst = node.siblingIndex == 0
         let isLast = node.siblingIndex + 1 == node.parent()?.childNodeSize()
 
-        switch node.nodeName() {
+        let nodeName = node.nodeName()
+        if ignoreTags.contains(nodeName) {
+            let attributes = node.getAttributes().flatMap { try? $0.html() } ?? ""
+            if attributes.isEmpty {
+                markdown += "<\(nodeName)>"
+            } else {
+                markdown += "<\(nodeName) \(attributes.trimmingCharacters(in: .whitespacesAndNewlines))>"
+            }
+            if node.childNodeSize() > 0 {
+                children()
+                markdown += "</\(nodeName)>"
+            }
+            return markdown
+        }
+        
+        switch nodeName {
         case "#text":
-            markdown += node.description.trimmingCharacters(in: .whitespacesAndNewlines)
+            markdown += node.description.trimmingCharacters(in: .newlines)
         case "br":
             markdown += "\n"
             children()
@@ -59,10 +76,14 @@ public class HTML2Markdown {
             markdown += "*"
             children()
             markdown += "*"
-        case "code":
-            markdown += "`"
+        case "del":
+            markdown += "~~"
             children()
-            markdown += "`"
+            markdown += "~~"
+        case "code":
+            markdown += "``"
+            children()
+            markdown += "``"
         case "a":
             if let href = try? node.attr("href"), !href.isEmpty {
                 markdown += "["
@@ -71,6 +92,12 @@ public class HTML2Markdown {
                 markdown += "(\(href))"
             } else {
                 children()
+            }
+        case "img":
+            if let src = try? node.attr("src"), !src.isEmpty {
+                let alt = (try? node.attr("alt")) ?? ""
+                markdown += "![\(alt)]"
+                markdown += "(\(src))"
             }
         // MARK: - List
         case "ol":

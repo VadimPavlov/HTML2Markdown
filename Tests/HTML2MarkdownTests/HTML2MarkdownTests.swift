@@ -40,11 +40,37 @@ final class HTML2MarkdownTests: XCTestCase {
         XCTAssertEqual(try converter.markdown(html: e), "*Emphasis*")
     }
     
+    func testStrikethrough() {
+        let del = "<del>Strikethrough</del>"
+        XCTAssertEqual(try converter.markdown(html: del), "~~Strikethrough~~")
+    }
+    
+    func testCode() {
+        let code = "<code>Code</code>"
+        XCTAssertEqual(try converter.markdown(html: code), "``Code``")
+    }
+    
     func testAnchor() {
         let a = #"<a href="htpps://apple.com">link</a>"#
         let l = #"<a ref="htpps://apple.com">link</a>"#
         XCTAssertEqual(try converter.markdown(html: a), "[link](htpps://apple.com)")
         XCTAssertEqual(try converter.markdown(html: l), "link")
+    }
+    
+    func testImage() {
+        let img = #"<img src="https://www.swift.org/assets/images/swift~dark.svg"/>"#
+        let imgAlt = #"<img src="https://www.swift.org/assets/images/swift~dark.svg" alt="Image"/>"#
+        XCTAssertEqual(try converter.markdown(html: img), "![](https://www.swift.org/assets/images/swift~dark.svg)")
+        XCTAssertEqual(try converter.markdown(html: imgAlt), "![Image](https://www.swift.org/assets/images/swift~dark.svg)")
+    }
+    
+    func testIgnoreTags() {
+        let u = "<u>Underlined <b>Bold</b> text</u>"
+        let img = "<img src=\"https://www.swift.org/assets/images/swift~dark.svg\" width=\"100\" height=\"100\">"
+        
+        let converter = HTML2Markdown(ignoreTags: ["u", "img"])
+        //XCTAssertEqual(try converter.markdown(html: u), "<u>Underlined **Bold** text</u>")
+        XCTAssertEqual(try converter.markdown(html: img), img)
     }
     
     func testBlockquoute() {
