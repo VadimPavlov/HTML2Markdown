@@ -98,6 +98,8 @@ public class HTML2Markdown {
                 let alt = (try? node.attr("alt")) ?? ""
                 markdown += "![\(alt)]"
                 markdown += "(\(src))"
+            } else {
+                children()
             }
         // MARK: - List
         case "ol":
